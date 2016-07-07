@@ -20,7 +20,7 @@
     },
     "autoload": {
 	    "psr-0": {
-		    "EdwardStock\\Spork": "src/"
+		    "EdwardStock\\Spork": "src/Spork/"
 	    }
     }
 }
