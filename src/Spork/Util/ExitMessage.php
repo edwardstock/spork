@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Util;
+namespace EdwardStock\Spork\Util;
 
 class ExitMessage implements \Serializable
 {
@@ -17,14 +17,14 @@ class ExitMessage implements \Serializable
     private $output;
     private $error;
 
-    public function getResult()
+    public function getError()
     {
-        return $this->result;
+        return $this->error;
     }
 
-    public function setResult($result)
+    public function setError(Error $error)
     {
-        $this->result = $result;
+        $this->error = $error;
     }
 
     public function getOutput()
@@ -37,14 +37,14 @@ class ExitMessage implements \Serializable
         $this->output = $output;
     }
 
-    public function getError()
+    public function getResult()
     {
-        return $this->error;
+        return $this->result;
     }
 
-    public function setError(Error $error)
+    public function setResult($result)
     {
-        $this->error = $error;
+        $this->result = $result;
     }
 
     public function serialize()

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Deferred;
+namespace EdwardStock\Spork\Deferred;
 
 interface PromiseInterface
 {
@@ -60,15 +60,16 @@ interface PromiseInterface
      */
     function done($done);
 
-    /**
-     * Adds a callback to be called when the promise fails.
-     *
-     * The callback will be called immediately if the promise state is rejected.
-     *
-     * @param callable $done The callback
-     *
-     * @return PromiseInterface The current promise
-     */
+	/**
+	 * Adds a callback to be called when the promise fails.
+	 *
+	 * The callback will be called immediately if the promise state is rejected.
+	 *
+	 * @param $fail
+	 * @return PromiseInterface The current promise
+	 * @internal param callable $done The callback
+	 *
+	 */
     function fail($fail);
 
     /**

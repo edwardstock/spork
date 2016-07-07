@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Util;
+namespace EdwardStock\Spork\Util;
 
-use Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
 
 /**
  * Throttles iteration based on a system load threshold.
@@ -30,6 +30,16 @@ class ThrottleIterator implements \OuterIterator
 
         $this->inner = $inner;
         $this->threshold = $threshold;
+    }
+
+    public function current()
+    {
+        // only throttle every 5s
+        if ($this->lastThrottle < time() - 5) {
+            $this->throttle();
+        }
+
+        return $this->getInnerIterator()->current();
     }
 
     /**
@@ -57,16 +67,6 @@ class ThrottleIterator implements \OuterIterator
         }
 
         return $this->inner;
-    }
-
-    public function current()
-    {
-        // only throttle every 5s
-        if ($this->lastThrottle < time() - 5) {
-            $this->throttle();
-        }
-
-        return $this->getInnerIterator()->current();
     }
 
     public function key()

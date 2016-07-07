@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Util;
+namespace EdwardStock\Spork\Util;
 
 class Error implements \Serializable
 {
@@ -41,14 +41,14 @@ class Error implements \Serializable
         $this->class = $class;
     }
 
-    public function getMessage()
+    public function getCode()
     {
-        return $this->message;
+        return $this->code;
     }
 
-    public function setMessage($message)
+    public function setCode($code)
     {
-        $this->message = $message;
+        $this->code = $code;
     }
 
     public function getFile()
@@ -71,14 +71,14 @@ class Error implements \Serializable
         $this->line = $line;
     }
 
-    public function getCode()
+    public function getMessage()
     {
-        return $this->code;
+        return $this->message;
     }
 
-    public function setCode($code)
+    public function setMessage($message)
     {
-        $this->code = $code;
+        $this->message = $message;
     }
 
     public function serialize()

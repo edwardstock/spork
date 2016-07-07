@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork;
+namespace EdwardStock\Spork;
 
-use Spork\Exception\ProcessControlException;
+use EdwardStock\Spork\Exception\ProcessControlException;
 
 /**
  * Sends messages between processes.
@@ -105,6 +105,8 @@ class SharedMemory
 
     /**
      * Sends a signal to the other process.
+     * @param $signal
+     * @return bool
      */
     public function signal($signal)
     {

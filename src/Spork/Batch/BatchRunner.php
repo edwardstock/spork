@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch;
+namespace EdwardStock\Spork\Batch;
 
-use Spork\Exception\UnexpectedTypeException;
-use Spork\SharedMemory;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\SharedMemory;
 
 class BatchRunner
 {

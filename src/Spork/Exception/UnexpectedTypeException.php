@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Exception;
+namespace EdwardStock\Spork\Exception;
 
 class UnexpectedTypeException extends \LogicException
 {

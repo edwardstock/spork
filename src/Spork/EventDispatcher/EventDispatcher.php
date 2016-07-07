@@ -11,7 +11,7 @@
 
 declare(ticks=1);
 
-namespace Spork\EventDispatcher;
+namespace EdwardStock\Spork\EventDispatcher;
 
 use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
 
@@ -20,15 +20,15 @@ use Symfony\Component\EventDispatcher\EventDispatcher as BaseEventDispatcher;
  */
 class EventDispatcher extends BaseEventDispatcher implements EventDispatcherInterface
 {
-    public function dispatchSignal($signal)
-    {
-        $this->dispatch('spork.signal.'.$signal);
-    }
-
     public function addSignalListener($signal, $callable, $priority = 0)
     {
         $this->addListener('spork.signal.'.$signal, $callable, $priority);
         pcntl_signal($signal, array($this, 'dispatchSignal'));
+    }
+
+	public function dispatchSignal($signal)
+	{
+		$this->dispatch('spork.signal.' . $signal);
     }
 
     public function removeSignalListener($signal, $callable)

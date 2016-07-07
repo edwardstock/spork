@@ -11,14 +11,40 @@
 
 namespace Spork\Test\Batch\Strategy;
 
-use Spork\Batch\Strategy\MongoStrategy;
-use Spork\EventDispatcher\Events;
-use Spork\ProcessManager;
+use EdwardStock\Spork\Batch\Strategy\MongoStrategy;
+use EdwardStock\Spork\EventDispatcher\Events;
+use EdwardStock\Spork\ProcessManager;
 
 class MongoStrategyTest extends \PHPUnit_Framework_TestCase
 {
     private $mongo;
     private $manager;
+
+    public function testBatchJob()
+    {
+        $coll = $this->mongo->spork->widgets;
+
+        $coll->remove();
+        $coll->batchInsert([
+            ['name' => 'Widget 1'],
+            ['name' => 'Widget 2'],
+            ['name' => 'Widget 3'],
+        ]);
+
+        $this->manager->createBatchJob($coll->find(), new MongoStrategy())
+            ->execute(function ($doc) use ($coll) {
+                $coll->update(
+                    ['_id' => $doc['_id']],
+                    ['$set' => ['seen' => true]]
+                );
+            });
+
+        $this->manager->wait();
+
+        foreach ($coll->find() as $doc) {
+            $this->assertArrayHasKey('seen', $doc);
+        }
+    }
 
     protected function setUp()
     {
@@ -49,31 +75,5 @@ class MongoStrategyTest extends \PHPUnit_Framework_TestCase
         }
 
         unset($this->mongo, $this->manager);
-    }
-
-    public function testBatchJob()
-    {
-        $coll = $this->mongo->spork->widgets;
-
-        $coll->remove();
-        $coll->batchInsert(array(
-            array('name' => 'Widget 1'),
-            array('name' => 'Widget 2'),
-            array('name' => 'Widget 3'),
-        ));
-
-        $this->manager->createBatchJob($coll->find(), new MongoStrategy())
-            ->execute(function($doc) use($coll) {
-                $coll->update(
-                    array('_id' => $doc['_id']),
-                    array('$set' => array('seen' => true))
-                );
-            });
-
-        $this->manager->wait();
-
-        foreach ($coll->find() as $doc) {
-            $this->assertArrayHasKey('seen', $doc);
-        }
     }
 }

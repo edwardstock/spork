@@ -9,13 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Test\Util;
+namespace EdwardStock\Spork\Test\Util;
 
-use Spork\Util\ThrottleIterator;
+use EdwardStock\Spork\Util\ThrottleIterator;
 
 class ThrottleIteratorTest extends \PHPUnit_Framework_TestCase
 {
     private $iterator;
+
+    public function testIteration()
+    {
+        iterator_to_array($this->iterator);
+        $this->assertEquals([1, 2, 4], $this->iterator->sleeps);
+    }
 
     protected function setUp()
     {
@@ -26,12 +32,6 @@ class ThrottleIteratorTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->iterator);
-    }
-
-    public function testIteration()
-    {
-        iterator_to_array($this->iterator);
-        $this->assertEquals(array(1, 2, 4), $this->iterator->sleeps);
     }
 }
 

@@ -9,23 +9,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Test;
+namespace EdwardStock\Spork\Test;
 
-use Spork\ProcessManager;
+use EdwardStock\Spork\ProcessManager;
 
 class SignalTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ProcessManager
+     */
     private $manager;
-
-    protected function setUp()
-    {
-        $this->manager = new ProcessManager();
-    }
-
-    protected function tearDown()
-    {
-        $this->manager = null;
-    }
 
     public function testSignalParent()
     {
@@ -41,5 +34,15 @@ class SignalTest extends \PHPUnit_Framework_TestCase
         $this->manager->wait();
 
         $this->assertTrue($signaled);
+    }
+
+    protected function setUp()
+    {
+        $this->manager = new ProcessManager();
+    }
+
+    protected function tearDown()
+    {
+        $this->manager = null;
     }
 }

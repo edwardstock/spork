@@ -11,7 +11,7 @@
 
 declare(ticks=1);
 
-namespace Spork\EventDispatcher;
+namespace EdwardStock\Spork\EventDispatcher;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as BaseEventDispatcherInterface;
@@ -26,9 +26,9 @@ class WrappedEventDispatcher implements EventDispatcherInterface
         $this->delegate = $delegate;
     }
 
-    public function dispatchSignal($signal)
+	public function addListener($eventName, $listener, $priority = 0)
     {
-        $this->delegate->dispatch('spork.signal.'.$signal);
+	    $this->delegate->addListener($eventName, $listener, $priority);
     }
 
     public function addSignalListener($signal, $callable, $priority = 0)
@@ -37,9 +37,9 @@ class WrappedEventDispatcher implements EventDispatcherInterface
         pcntl_signal($signal, array($this, 'dispatchSignal'));
     }
 
-    public function removeSignalListener($signal, $callable)
+	public function addSubscriber(EventSubscriberInterface $subscriber)
     {
-        $this->delegate->removeListener('spork.signal.'.$signal, $callable);
+	    $this->delegate->addSubscriber($subscriber);
     }
 
     public function dispatch($eventName, Event $event = null)
@@ -47,33 +47,48 @@ class WrappedEventDispatcher implements EventDispatcherInterface
         return $this->delegate->dispatch($eventName, $event);
     }
 
-    public function addListener($eventName, $listener, $priority = 0)
+	public function dispatchSignal($signal)
     {
-        $this->delegate->addListener($eventName, $listener, $priority);
+	    $this->delegate->dispatch('spork.signal.' . $signal);
     }
 
-    public function addSubscriber(EventSubscriberInterface $subscriber)
+	/**
+	 * Gets the listener priority for a specific event.
+	 *
+	 * Returns null if the event or the listener does not exist.
+	 *
+	 * @param string $eventName The name of the event
+	 * @param callable $listener The listener
+	 *
+	 * @return int|null The event listener priority
+	 */
+	public function getListenerPriority($eventName, $listener)
+	{
+		return null;
+	}
+
+	public function getListeners($eventName = null)
     {
-        $this->delegate->addSubscriber($subscriber);
+	    return $this->delegate->getListeners($eventName);
     }
 
-    public function removeListener($eventName, $listener)
+	public function hasListeners($eventName = null)
     {
-        $this->delegate->removeListener($eventName, $listener);
+	    return $this->delegate->hasListeners($eventName);
     }
 
-    public function removeSubscriber(EventSubscriberInterface $subscriber)
+	public function removeListener($eventName, $listener)
     {
-        $this->delegate->removeSubscriber($subscriber);
+	    $this->delegate->removeListener($eventName, $listener);
     }
 
-    public function getListeners($eventName = null)
+	public function removeSignalListener($signal, $callable)
     {
-        return $this->delegate->getListeners($eventName);
+	    $this->delegate->removeListener('spork.signal.' . $signal, $callable);
     }
 
-    public function hasListeners($eventName = null)
+	public function removeSubscriber(EventSubscriberInterface $subscriber)
     {
-        return $this->delegate->hasListeners($eventName);
+	    $this->delegate->removeSubscriber($subscriber);
     }
 }

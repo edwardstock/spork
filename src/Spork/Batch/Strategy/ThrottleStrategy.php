@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch\Strategy;
+namespace EdwardStock\Spork\Batch\Strategy;
 
-use Spork\Util\ThrottleIterator;
+use EdwardStock\Spork\Util\ThrottleIterator;
 
 class ThrottleStrategy implements StrategyInterface
 {

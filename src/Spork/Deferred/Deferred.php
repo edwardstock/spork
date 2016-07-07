@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Deferred;
+namespace EdwardStock\Spork\Deferred;
 
-use Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
 
 class Deferred implements DeferredInterface
 {
@@ -30,22 +30,6 @@ class Deferred implements DeferredInterface
         $this->alwaysCallbacks = array();
         $this->doneCallbacks = array();
         $this->failCallbacks = array();
-    }
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function progress($progress)
-    {
-        if (!is_callable($progress)) {
-            throw new UnexpectedTypeException($progress, 'callable');
-        }
-
-        $this->progressCallbacks[] = $progress;
-
-        return $this;
     }
 
     public function always($always)
@@ -101,15 +85,9 @@ class Deferred implements DeferredInterface
         return $this;
     }
 
-    public function then($done, $fail = null)
+	public function getState()
     {
-        $this->done($done);
-
-        if ($fail) {
-            $this->fail($fail);
-        }
-
-        return $this;
+	    return $this->state;
     }
 
     public function notify()
@@ -126,49 +104,71 @@ class Deferred implements DeferredInterface
         return $this;
     }
 
-    public function resolve()
+	public function progress($progress)
     {
-        if (DeferredInterface::STATE_REJECTED === $this->state) {
-            throw new \LogicException('Cannot resolve a deferred object that has already been rejected');
+	    if (!is_callable($progress)) {
+		    throw new UnexpectedTypeException($progress, 'callable');
         }
 
+	    $this->progressCallbacks[] = $progress;
+
+	    return $this;
+    }
+
+	public function reject()
+	{
         if (DeferredInterface::STATE_RESOLVED === $this->state) {
+	        throw new \LogicException('Cannot reject a deferred object that has already been resolved');
+        }
+
+		if (DeferredInterface::STATE_REJECTED === $this->state) {
             return $this;
         }
 
-        $this->state = DeferredInterface::STATE_RESOLVED;
+		$this->state = DeferredInterface::STATE_REJECTED;
         $this->callbackArgs = func_get_args();
 
         while ($func = array_shift($this->alwaysCallbacks)) {
             call_user_func_array($func, $this->callbackArgs);
         }
 
-        while ($func = array_shift($this->doneCallbacks)) {
+		while ($func = array_shift($this->failCallbacks)) {
             call_user_func_array($func, $this->callbackArgs);
         }
 
         return $this;
     }
 
-    public function reject()
+	public function resolve()
     {
-        if (DeferredInterface::STATE_RESOLVED === $this->state) {
-            throw new \LogicException('Cannot reject a deferred object that has already been resolved');
+	    if (DeferredInterface::STATE_REJECTED === $this->state) {
+		    throw new \LogicException('Cannot resolve a deferred object that has already been rejected');
         }
 
-        if (DeferredInterface::STATE_REJECTED === $this->state) {
+	    if (DeferredInterface::STATE_RESOLVED === $this->state) {
             return $this;
         }
 
-        $this->state = DeferredInterface::STATE_REJECTED;
+	    $this->state = DeferredInterface::STATE_RESOLVED;
         $this->callbackArgs = func_get_args();
 
         while ($func = array_shift($this->alwaysCallbacks)) {
             call_user_func_array($func, $this->callbackArgs);
         }
 
-        while ($func = array_shift($this->failCallbacks)) {
+	    while ($func = array_shift($this->doneCallbacks)) {
             call_user_func_array($func, $this->callbackArgs);
+	    }
+
+	    return $this;
+    }
+
+	public function then($done, $fail = null)
+	{
+		$this->done($done);
+
+		if ($fail) {
+			$this->fail($fail);
         }
 
         return $this;

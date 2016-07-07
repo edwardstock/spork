@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch\Strategy;
+namespace EdwardStock\Spork\Batch\Strategy;
 
-use Spork\Batch\BatchRunner;
+use EdwardStock\Spork\Batch\BatchRunner;
 
 abstract class AbstractStrategy implements StrategyInterface
 {

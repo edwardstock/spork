@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork;
+namespace EdwardStock\Spork;
 
-use Spork\Batch\BatchJob;
-use Spork\Batch\Strategy\StrategyInterface;
+use EdwardStock\Spork\Batch\BatchJob;
+use EdwardStock\Spork\Batch\Strategy\StrategyInterface;
 
 class Factory
 {
@@ -31,19 +31,6 @@ class Factory
     }
 
     /**
-     * Creates a new shared memory instance.
-     *
-     * @param integer $pid    The child process id or null if this is the child
-     * @param integer $signal The signal to send after writing to shared memory
-     *
-     * @return SharedMemory A new shared memory instance
-     */
-    public function createSharedMemory($pid = null, $signal = null)
-    {
-        return new SharedMemory($pid, $signal);
-    }
-
-    /**
      * Creates a new fork instance.
      *
      * @param int          $pid   Process id
@@ -55,5 +42,18 @@ class Factory
     public function createFork($pid, SharedMemory $shm, $debug = false)
     {
         return new Fork($pid, $shm, $debug);
+    }
+
+    /**
+     * Creates a new shared memory instance.
+     *
+     * @param integer $pid The child process id or null if this is the child
+     * @param integer $signal The signal to send after writing to shared memory
+     *
+     * @return SharedMemory A new shared memory instance
+     */
+    public function createSharedMemory($pid = null, $signal = null)
+    {
+        return new SharedMemory($pid, $signal);
     }
 }

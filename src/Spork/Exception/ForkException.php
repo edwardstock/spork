@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Exception;
+namespace EdwardStock\Spork\Exception;
 
-use Spork\Util\Error;
+use EdwardStock\Spork\Util\Error;
 
 /**
  * Turns an error passed through shared memory into an exception.
@@ -48,13 +48,13 @@ class ForkException extends \RuntimeException
         }
     }
 
-    public function getPid()
-    {
-        return $this->pid;
-    }
-
     public function getError()
     {
         return $this->error;
+    }
+
+    public function getPid()
+    {
+        return $this->pid;
     }
 }

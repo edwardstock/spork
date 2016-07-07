@@ -1,7 +1,7 @@
 {
-    "name": "kriswallsmith/spork",
+	"name": "edwardstock/spork",
     "description": "Asynchronous PHP",
-    "homepage": "https://github.com/kriswallsmith/spork",
+	"homepage": "https://github.com/edwardstock/spork",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -19,6 +19,8 @@
         "symfony/event-dispatcher": "*"
     },
     "autoload": {
-        "psr-0": { "Spork": "src/" }
+	    "psr-0": {
+		    "EdwardStock\\Spork": "src/"
+	    }
     }
 }

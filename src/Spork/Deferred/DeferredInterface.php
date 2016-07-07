@@ -9,41 +9,35 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Deferred;
+namespace EdwardStock\Spork\Deferred;
 
 interface DeferredInterface extends PromiseInterface
 {
-    /**
-     * Notifies the promise of progress.
-     *
-     * @param mixed $args Any arguments will be passed along to the callbacks
-     *
-     * @return DeferredInterface The current promise
-     * @throws \LogicException   If the promise is not pending
-     */
+	/**
+	 * Notifies the promise of progress.
+	 * @return DeferredInterface The current promise
+	 * @internal param mixed $args Any arguments will be passed along to the callbacks
+	 *
+	 */
     function notify();
 
-    /**
-     * Marks the current promise as successful.
-     *
-     * Calls "always" callbacks first, followed by "done" callbacks.
-     *
-     * @param mixed $args Any arguments will be passed along to the callbacks
-     *
-     * @return DeferredInterface The current promise
-     * @throws \LogicException   If the promise was previously rejected
-     */
+	/**
+	 * Marks the current promise as successful.
+	 *
+	 * Calls "always" callbacks first, followed by "done" callbacks.
+	 * @return DeferredInterface The current promise
+	 * @internal param mixed $args Any arguments will be passed along to the callbacks
+	 *
+	 */
     function resolve();
 
-    /**
-     * Marks the current promise as failed.
-     *
-     * Calls "always" callbacks first, followed by "fail" callbacks.
-     *
-     * @param mixed $args Any arguments will be passed along to the callbacks
-     *
-     * @return DeferredInterface The current promise
-     * @throws \LogicException   If the promise was previously resolved
-     */
+	/**
+	 * Marks the current promise as failed.
+	 *
+	 * Calls "always" callbacks first, followed by "fail" callbacks.
+	 * @return DeferredInterface The current promise
+	 * @internal param mixed $args Any arguments will be passed along to the callbacks
+	 *
+	 */
     function reject();
 }

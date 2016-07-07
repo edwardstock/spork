@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Deferred;
+namespace EdwardStock\Spork\Deferred;
 
-use Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
 
 class DeferredAggregate implements PromiseInterface
 {
@@ -39,40 +39,40 @@ class DeferredAggregate implements PromiseInterface
         $this->tick();
     }
 
-    public function getState()
+	public function always($always)
     {
-        return $this->delegate->getState();
+	    $this->delegate->always($always);
+
+	    return $this;
     }
 
-    public function getChildren()
+	public function done($done)
     {
-        return $this->children;
-    }
-
-    public function progress($progress)
-    {
-        $this->delegate->progress($progress);
+	    $this->delegate->done($done);
 
         return $this;
     }
 
-    public function always($always)
+	public function fail($fail)
     {
-        $this->delegate->always($always);
+	    $this->delegate->fail($fail);
 
         return $this;
     }
 
-    public function done($done)
+	public function getChildren()
     {
-        $this->delegate->done($done);
-
-        return $this;
+	    return $this->children;
     }
 
-    public function fail($fail)
+	public function getState()
+	{
+		return $this->delegate->getState();
+    }
+
+	public function progress($progress)
     {
-        $this->delegate->fail($fail);
+	    $this->delegate->progress($progress);
 
         return $this;
     }

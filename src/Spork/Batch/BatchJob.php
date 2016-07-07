@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch;
+namespace EdwardStock\Spork\Batch;
 
-use Spork\Batch\Strategy\ChunkStrategy;
-use Spork\Batch\Strategy\StrategyInterface;
-use Spork\Exception\UnexpectedTypeException;
-use Spork\ProcessManager;
+use EdwardStock\Spork\Batch\Strategy\ChunkStrategy;
+use EdwardStock\Spork\Batch\Strategy\StrategyInterface;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\ProcessManager;
 
 class BatchJob
 {
@@ -32,28 +32,41 @@ class BatchJob
         $this->name = '<anonymous>';
     }
 
-    public function setName($name)
+	/**
+	 * Runs in a child process.
+	 *
+	 * @see execute()
+	 */
+	public function __invoke()
     {
-        $this->name = $name;
+	    $forks = [];
+	    foreach ($this->strategy->createBatches($this->data) as $index => $batch) {
+		    $forks[] = $this->manager
+			    ->fork($this->strategy->createRunner($batch, $this->callback))
+			    ->setName(sprintf('%s batch #%d', $this->name, $index));
+	    }
 
-        return $this;
+	    // block until all forks have exited
+	    $this->manager->wait();
+
+	    $results = [];
+	    foreach ($forks as $fork) {
+		    $results = array_merge($results, $fork->getResult());
+	    }
+
+	    return $results;
     }
 
-    public function setStrategy(StrategyInterface $strategy)
-    {
-        $this->strategy = $strategy;
+	public function execute($callback = null)
+	{
+		if (null !== $callback) {
+			$this->setCallback($callback);
+		}
 
-        return $this;
-    }
+		return $this->manager->fork($this)->setName($this->name . ' batch');
+	}
 
-    public function setData($data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    public function setCallback($callback)
+	public function setCallback($callback)
     {
         if (!is_callable($callback)) {
             throw new UnexpectedTypeException($callback, 'callable');
@@ -64,38 +77,24 @@ class BatchJob
         return $this;
     }
 
-    public function execute($callback = null)
+    public function setData($data)
     {
-        if (null !== $callback) {
-            $this->setCallback($callback);
-        }
+	    $this->data = $data;
 
-        return $this->manager->fork($this)->setName($this->name.' batch');
+	    return $this;
     }
 
-    /**
-     * Runs in a child process.
-     *
-     * @see execute()
-     */
-    public function __invoke()
-    {
-        $forks = array();
-        foreach ($this->strategy->createBatches($this->data) as $index => $batch) {
-            $forks[] = $this->manager
-                ->fork($this->strategy->createRunner($batch, $this->callback))
-                ->setName(sprintf('%s batch #%d', $this->name, $index))
-            ;
-        }
+	public function setName($name)
+	{
+		$this->name = $name;
 
-        // block until all forks have exited
-        $this->manager->wait();
+		return $this;
+	}
 
-        $results = array();
-        foreach ($forks as $fork) {
-            $results = array_merge($results, $fork->getResult());
-        }
+	public function setStrategy(StrategyInterface $strategy)
+	{
+		$this->strategy = $strategy;
 
-        return $results;
-    }
+		return $this;
+	}
 }

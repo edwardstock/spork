@@ -9,16 +9,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork;
+namespace EdwardStock\Spork;
 
-use Spork\Batch\Strategy\StrategyInterface;
-use Spork\EventDispatcher\EventDispatcher;
-use Spork\EventDispatcher\EventDispatcherInterface;
-use Spork\EventDispatcher\Events;
-use Spork\Exception\ProcessControlException;
-use Spork\Exception\UnexpectedTypeException;
-use Spork\Util\Error;
-use Spork\Util\ExitMessage;
+use EdwardStock\Spork\Batch\Strategy\StrategyInterface;
+use EdwardStock\Spork\EventDispatcher\EventDispatcher;
+use EdwardStock\Spork\EventDispatcher\EventDispatcherInterface;
+use EdwardStock\Spork\EventDispatcher\Events;
+use EdwardStock\Spork\Exception\ProcessControlException;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\Util\Error;
+use EdwardStock\Spork\Util\ExitMessage;
 
 class ProcessManager
 {
@@ -47,11 +47,6 @@ class ProcessManager
         }
     }
 
-    public function getEventDispatcher()
-    {
-        return $this->dispatcher;
-    }
-
     public function addListener($eventName, $listener, $priority = 0)
     {
         if (is_integer($eventName)) {
@@ -61,24 +56,18 @@ class ProcessManager
         }
     }
 
-    public function setDebug($debug)
+    public function check()
     {
-        $this->debug = $debug;
-    }
-
-    public function zombieOkay($zombieOkay = true)
-    {
-        $this->zombieOkay = $zombieOkay;
+        foreach ($this->forks as $fork) {
+            foreach ($fork->receive() as $message) {
+                $fork->notify($message);
+            }
+        }
     }
 
     public function createBatchJob($data = null, StrategyInterface $strategy = null)
     {
         return $this->factory->createBatchJob($this, $data, $strategy);
-    }
-
-    public function process($data, $callable, StrategyInterface $strategy = null)
-    {
-        return $this->createBatchJob($data, $strategy)->execute($callable);
     }
 
 	/**
@@ -159,19 +148,36 @@ class ProcessManager
         return $this->forks[$pid] = $this->factory->createFork($pid, $shm, $this->debug);
     }
 
+    public function getEventDispatcher()
+    {
+        return $this->dispatcher;
+    }
+
+    /**
+     * Sends a signal to all forks.
+     * @param int $signal
+     */
+    public function killAll($signal = SIGINT)
+    {
+        foreach ($this->forks as $fork) {
+            $fork->kill($signal);
+        }
+    }
+
     public function monitor($signal = SIGUSR1)
     {
         $this->signal = $signal;
         $this->dispatcher->addSignalListener($signal, array($this, 'check'));
     }
 
-    public function check()
+    public function process($data, $callable, StrategyInterface $strategy = null)
     {
-        foreach ($this->forks as $fork) {
-            foreach ($fork->receive() as $message) {
-                $fork->notify($message);
-            }
-        }
+        return $this->createBatchJob($data, $strategy)->execute($callable);
+    }
+
+    public function setDebug($debug)
+    {
+        $this->debug = $debug;
     }
 
     public function wait($hang = true)
@@ -179,6 +185,15 @@ class ProcessManager
         foreach ($this->forks as $fork) {
             $fork->wait($hang);
         }
+    }
+
+    public function waitFor($pid, $hang = true)
+    {
+        if (!isset($this->forks[$pid])) {
+            throw new \InvalidArgumentException('There is no fork with PID ' . $pid);
+        }
+
+        return $this->forks[$pid]->wait($hang);
     }
 
     public function waitForNext($hang = true)
@@ -194,22 +209,8 @@ class ProcessManager
         }
     }
 
-    public function waitFor($pid, $hang = true)
+    public function zombieOkay($zombieOkay = true)
     {
-        if (!isset($this->forks[$pid])) {
-            throw new \InvalidArgumentException('There is no fork with PID '.$pid);
-        }
-
-        return $this->forks[$pid]->wait($hang);
-    }
-
-    /**
-     * Sends a signal to all forks.
-     */
-    public function killAll($signal = SIGINT)
-    {
-        foreach ($this->forks as $fork) {
-            $fork->kill($signal);
-        }
+        $this->zombieOkay = $zombieOkay;
     }
 }

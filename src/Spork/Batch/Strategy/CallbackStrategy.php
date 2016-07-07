@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch\Strategy;
+namespace EdwardStock\Spork\Batch\Strategy;
 
-use Spork\Exception\UnexpectedTypeException;
+use EdwardStock\Spork\Exception\UnexpectedTypeException;
 
 class CallbackStrategy extends AbstractStrategy
 {

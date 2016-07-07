@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\Batch\Strategy;
+namespace EdwardStock\Spork\Batch\Strategy;
 
 class DoctrineMongoStrategy extends MongoStrategy
 {

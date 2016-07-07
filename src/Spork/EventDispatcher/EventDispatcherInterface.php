@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Spork\EventDispatcher;
+namespace EdwardStock\Spork\EventDispatcher;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as BaseEventDispatcherInterface;
 
