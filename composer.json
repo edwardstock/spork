@@ -19,8 +19,8 @@
         "symfony/event-dispatcher": "*"
     },
     "autoload": {
-	    "psr-0": {
-		    "EdwardStock\\Spork": "src/Spork/"
+	    "psr-4": {
+		    "EdwardStock\\Spork\\": "src/Spork/"
 	    }
     }
 }
