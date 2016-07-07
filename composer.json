@@ -1,7 +1,7 @@
 {
 	"name": "edwardstock/spork",
     "description": "Asynchronous PHP",
-	"homepage": "https://github.com/edwardstock/spork",
+	"homepage": "https://github.com/kriswallsmith/spork",
     "type": "library",
     "license": "MIT",
     "authors": [
