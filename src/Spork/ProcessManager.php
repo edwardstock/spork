@@ -81,10 +81,13 @@ class ProcessManager
         return $this->createBatchJob($data, $strategy)->execute($callable);
     }
 
-    /**
-     * Forks something into another process and returns a deferred object.
-     */
-    public function fork($callable)
+	/**
+	 * Forks something into another process and returns a deferred object.
+	 * @param $callable
+	 * @param string $processTitle
+	 * @return Fork
+	 */
+    public function fork($callable, $processTitle = null)
     {
         if (!is_callable($callable)) {
             throw new UnexpectedTypeException($callable, 'callable');
@@ -98,6 +101,10 @@ class ProcessManager
         }
 
         if (0 === $pid) {
+	        if (function_exists('cli_set_process_title') && $processTitle !== null) {
+		        cli_set_process_title($processTitle);
+	        }
+
             // reset the list of child processes
             $this->forks = array();
 
